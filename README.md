@@ -5,6 +5,10 @@ Glide is a fast-paced movement game inspired by classic Source Engine surfing an
 ### Technical details
 Unity version: v6000.2.3f1
 
+Personal recommendations:
+* JetBrains Rider (for C# development)
+* GitKraken (for source control)
+
 ### How to work
 * **main** is our production branch, only push working bug-free code there.
 * **develop** is all our code that still needs to go through quality assurance.
