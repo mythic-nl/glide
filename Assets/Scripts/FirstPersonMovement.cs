@@ -1,74 +1,123 @@
-using System;
 using UnityEngine;
 
 public class FirstPersonMovement : MonoBehaviour
 {
-    private const float SourceEngineUnit = 28.07f;
+    [Header("Temporal Variables")]
+    [SerializeField] private float gravity;
+    [SerializeField] private float maxVerticalSpeed;
+    [SerializeField] private float jumpForce;
+    [SerializeField] private float groundedAcceleration;
+    [SerializeField] private float maxGroundedAcceleration;
+    [SerializeField] private float airborneAcceleration;
+    [SerializeField] private float maxAirborneAcceleration;
+    [SerializeField] private float friction;
     
-    [SerializeField] private float _airAcceleration = 4f;
-    [SerializeField] private float _groundAcceleration = 4f;
+    [Header("References")]
+    [SerializeField] private CharacterController characterController;
+    [SerializeField] private Transform mainCamera;
 
-    [SerializeField] private float _maxAirSpeed = 114f;
-    [SerializeField] private float _maxGroundSpeed = 11.4f;
+    private Vector3 _velocity;
 
-    [SerializeField] private float _surfaceFriction = 1f;
-    [SerializeField] private float _friction = 4f;
-
-    [SerializeField] private Vector3 _velocity;
-    [SerializeField] private Vector3 _wishDirection;
-    
     private void Awake()
     {
-        
-    }
+        if (characterController == null) {
+            Debug.LogError("There is no CharacterController set to the FirstPersonMovement script.");
+        }
 
-    private void OnGUI()
-    {
-        GUI.Label(new Rect(10, 10, 300, 20), $"Velocity: {_velocity.magnitude}");
+        if (mainCamera == null) {
+            Debug.LogError("There is no MainCamera set to the FirstPersonMovement script.");
+        }
     }
-
+    
     private void Update()
     {
-        _wishDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
-        
+        RotateWithCamera();
+
         Movement();
-        
-        // Move towards the rotated camera direction
-        _wishDirection = Quaternion.Euler(0, Camera.main.transform.eulerAngles.y, 0) * _wishDirection;
-        _wishDirection.Normalize();
-        
-        
     }
 
     private void Movement()
     {
-        _velocity = Friction();
-        _velocity = Accelerate(_groundAcceleration, _maxGroundSpeed);
+        Vector3 wishDirection = CalculateWishDirection();
+        Debug.Log($"Wish direction: {wishDirection}");
+        
+        _velocity = characterController.isGrounded 
+            ? CalculateGroundedMovement(wishDirection, _velocity) 
+            : CalculateAirborneMovement(wishDirection, _velocity);
 
-        transform.Translate(_velocity * Time.deltaTime, Space.World);
+        characterController.Move(_velocity * Time.deltaTime);
     }
 
-    private Vector3 Accelerate(float acceleration, float maxSpeed)
+    private Vector3 Accelerate(Vector3 wishDirection, Vector3 currentVelocity, float acceleration, float maxSpeed)
     {
-        float currentSpeed = Vector3.Dot(_velocity, _wishDirection);
-        float addSpeed = acceleration - currentSpeed;
+        float wishSpeed = Vector3.Dot(wishDirection, currentVelocity);
+        float accelerationSpeed = acceleration * Time.deltaTime;
 
-        if (currentSpeed + addSpeed > maxSpeed) {
-            addSpeed = maxSpeed - currentSpeed;
+        if (wishSpeed + accelerationSpeed > maxSpeed) {
+            accelerationSpeed = maxSpeed - wishSpeed;
         }
 
-        return _velocity + _wishDirection * addSpeed;
+        return currentVelocity + wishDirection * accelerationSpeed;
+    }
+
+    private Vector3 CalculateGroundedMovement(Vector3 wishDirection, Vector3 currentVelocity)
+    {
+        float speed = currentVelocity.magnitude;
+        if (speed != 0.0f) {
+            float drop = speed * friction * Time.deltaTime;
+            currentVelocity *= Mathf.Max(speed - drop, 0.0f) / speed;
+        }
+
+        return Accelerate(wishDirection, currentVelocity, groundedAcceleration, maxGroundedAcceleration);
+    }
+
+    private Vector3 CalculateAirborneMovement(Vector3 wishDirection, Vector3 currentVelocity)
+    {
+        return Accelerate(wishDirection, currentVelocity, airborneAcceleration, maxAirborneAcceleration);
+    }
+
+    private Vector3 CalculateWishDirection()
+    {
+        Vector3 input = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical"));
+        Vector3 horizontalVelocity = CalculateCameraDependantDirection(input);
+        
+        return new Vector3(horizontalVelocity.x, CalculateVerticalSpeed(), horizontalVelocity.z);
+    }
+
+    private Vector3 CalculateCameraDependantDirection(Vector3 input)
+    {
+        Vector3 cameraForward = mainCamera.forward;
+        Vector3 cameraRight = mainCamera.right;
+        
+        cameraForward.y = 0f;
+        cameraRight.y = 0f;
+        
+        cameraForward.Normalize();
+        cameraRight.Normalize();
+        
+        input = cameraForward * input.z + cameraRight * input.x;
+        return input.normalized;
     }
     
-    private Vector3 Friction()
+    private float CalculateVerticalSpeed()
     {
-        float speed = _velocity.magnitude;
-        
-        if (speed < 0.1f) {
-            return Vector3.zero;
+        if (characterController.isGrounded) {
+            if (Input.GetKey(KeyCode.Space)) {
+                Debug.Log("Returning jump force");
+                return jumpForce;
+            }
+            
+            if (_velocity.y < 0f) {
+                return -1.0f;
+            }
         }
 
-        float drop = speed * _friction * Time.deltaTime;
-        return _velocity *= Mathf.Max(speed - drop, 0.0f) / speed;
+        float verticalSpeed = _velocity.y - gravity * Time.deltaTime;
+        return Mathf.Clamp(verticalSpeed, -maxVerticalSpeed, maxVerticalSpeed);
+    }
+
+    private void RotateWithCamera()
+    {
+        transform.rotation = Quaternion.Euler(0f, mainCamera.transform.rotation.eulerAngles.y, 0f);
     }
 }
