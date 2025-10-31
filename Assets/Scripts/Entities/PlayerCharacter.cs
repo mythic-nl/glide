@@ -1,5 +1,4 @@
 using KinematicCharacterController;
-using NUnit.Framework.Internal.Commands;
 using UnityEngine;
 
 namespace Entities
