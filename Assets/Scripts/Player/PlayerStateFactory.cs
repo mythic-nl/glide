@@ -9,6 +9,7 @@ namespace Player
         {
             GroundedState();
             AirborneState();
+            SlideState();
         }
 
         private void GroundedState()

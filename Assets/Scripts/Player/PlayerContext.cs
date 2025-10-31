@@ -19,6 +19,7 @@ namespace Player
         public float walkSpeed = 12f;
         public float sprintSpeed = 16f;
         public float airborneSpeed = 10f;
+        public float slideEndSpeed = 9f;
 
         [Header("Acceleration")] 
         public float walkAccelerationResponse = 10f;

@@ -16,7 +16,12 @@ namespace Player.States
         
         protected override void SetTransitions()
         {
-            AddTransition<PlayerGroundedState>(() => Context.CollisionInfo.Grounded && Context.CollisionInfo.Angle < 45f);
+            AddTransition<PlayerGroundedState>(() => 
+                Context.CollisionInfo.Grounded && 
+                Context.CollisionInfo.Angle < 45f && 
+                Context.CharacterInfo.Velocity.magnitude < Context.slideEndSpeed
+            );
+            
             AddTransition<PlayerAirborneState>(() => Context.CollisionInfo.Grounded == false);
         }
     }
