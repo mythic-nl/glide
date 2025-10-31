@@ -70,13 +70,14 @@ namespace Player
                 direction:   -CharacterInfo.Up, 
                 hitInfo:     out RaycastHit hitInfo, 
                 maxDistance: 0.2f
-                );
+            );
 
             CollisionInfo info = CollisionInfo;
             
             info.Grounded = collided;
             info.Point    = hitInfo.point;
             info.Normal   = hitInfo.normal;
+            info.Angle    = Vector3.Angle(hitInfo.normal, CharacterInfo.Up);
             
             CollisionInfo = info;
         }

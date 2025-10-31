@@ -17,7 +17,8 @@ namespace Player.States
         
         protected override void SetTransitions()
         {
-            AddTransition<PlayerGroundedState>(() => Context.CollisionInfo.Grounded);
+            AddTransition<PlayerSlideState>(() => Context.CollisionInfo.Grounded && Context.CollisionInfo.Angle >= 45f);
+            AddTransition<PlayerGroundedState>(() => Context.CollisionInfo.Grounded && Context.CollisionInfo.Angle < 45f);
         }
 
         private void HandleUpdateGravity(ref Vector3 velocity, float deltaTime)

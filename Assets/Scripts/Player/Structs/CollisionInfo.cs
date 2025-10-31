@@ -7,5 +7,6 @@ namespace Player.Structs
         public bool Grounded;
         public Vector3 Point;
         public Vector3 Normal;
+        public float Angle;
     }
 }

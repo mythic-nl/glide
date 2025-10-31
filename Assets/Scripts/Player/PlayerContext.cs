@@ -13,6 +13,7 @@ namespace Player
 
         [Header("Friction")] 
         public float baseFriction = 3f;
+        public float slideFriction = 0.9f;
 
         [Header("Speed")] 
         public float walkSpeed = 12f;
