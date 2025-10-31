@@ -1,5 +1,6 @@
 ﻿using Player.States._Base;
 using UnityEngine;
+using Utils;
 
 namespace Player.States
 {
@@ -8,6 +9,24 @@ namespace Player.States
         protected override void OnEnter()
         {
             SetChild<PlayerAirStrafeState>();
+        }
+        
+        protected override void OnUpdateRotation(ref Quaternion rotation, float deltaTime)
+        {
+            if (Context.CharacterInfo.Velocity.magnitude >= 0.1f) {
+                Vector3 planarVelocity = Vector3.ProjectOnPlane(Context.CharacterInfo.Velocity, Context.CharacterInfo.Up);
+
+                if (planarVelocity.sqrMagnitude < 0.001f) {
+                    return;
+                }
+                
+                Quaternion targetRotation = Quaternion.LookRotation(planarVelocity, Context.CharacterInfo.Up);
+                rotation = Quaternion.RotateTowards(
+                    from: rotation,
+                    to: targetRotation,
+                    maxDegreesDelta: Context.rotationSpeed * deltaTime
+                );
+            }
         }
         
         protected override void OnUpdateVelocity(ref Vector3 velocity, float deltaTime)
@@ -28,10 +47,10 @@ namespace Player.States
             if (Context.CollisionInfo.Grounded == false) {
                 float targetVerticalSpeed = -Context.gravity;
                 verticalSpeed = Mathf.Lerp(
-                    verticalSpeed,
-                    targetVerticalSpeed,
-                    Context.GetInterpolationTime(Context.gravityResponse, deltaTime)
-                    );
+                    a: verticalSpeed,
+                    b: targetVerticalSpeed,
+                    t: Common.GetInterpolationTime(Context.gravityResponse, deltaTime)
+                );
             }
 
             velocity = planarVelocity + (Context.CharacterInfo.Up * verticalSpeed);

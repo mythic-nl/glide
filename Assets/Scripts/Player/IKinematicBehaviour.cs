@@ -23,14 +23,6 @@ namespace Player
         public void OnUpdateUserInput();
 
         /// <summary>
-        /// Get the interpolation time based on a response value and delta time.
-        /// </summary>
-        /// <param name="response"></param>
-        /// <param name="deltaTime"></param>
-        /// <returns></returns>
-        public float GetInterpolationTime(float response, float deltaTime);
-
-        /// <summary>
         /// Get the direction vector tangent to a given surface normal. Allowing for better movement along slopes.
         /// </summary>
         /// <param name="direction"></param>

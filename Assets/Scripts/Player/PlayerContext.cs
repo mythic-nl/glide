@@ -2,11 +2,16 @@
 using Stateforge.Runtime.Interfaces;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using PlayerInput = Input.PlayerInput;
 
 namespace Player
 {
     public class PlayerContext : KinematicBehaviour, IContext
     {
+        [Header("References")] 
+        [SerializeField] private PlayerInput input;
+        [SerializeField] private Transform cameraTransform;
+        
         [Header("Gravity")]
         public float gravity = 45f;
         public float gravityResponse = 6f;
@@ -20,6 +25,7 @@ namespace Player
         public float sprintSpeed = 16f;
         public float airborneSpeed = 10f;
         public float slideEndSpeed = 9f;
+        public float rotationSpeed = 50f;
 
         [Header("Acceleration")] 
         public float walkAccelerationResponse = 10f;
@@ -29,21 +35,20 @@ namespace Player
         [Header("Forces")] 
         public float upwardForce = 40f;
         public float downwardForce = 60f;
-        
-        [HideInInspector] public InputRequest InputRequest;
-        
+
+        [HideInInspector] 
+        public InputRequest InputRequest;
+        public Transform CameraTransform => cameraTransform;
+
         public override void OnUpdateUserInput()
         {
-            Vector3 movementDirection = Vector3.zero;
+            Vector3 forward = Vector3.ProjectOnPlane(cameraTransform.forward, CharacterInfo.Up).normalized;
+            Vector3 right   = Vector3.ProjectOnPlane(cameraTransform.right, CharacterInfo.Up).normalized;
+            Vector3 movementDirection = (forward * input.Move.y) + (right * input.Move.x);
+            InputRequest.MovementDirection = Vector3.ClampMagnitude(movementDirection, 1f);;
             
-            if (Keyboard.current.wKey.isPressed) movementDirection.z += 1f;
-            if (Keyboard.current.sKey.isPressed) movementDirection.z -= 1f;
-            if (Keyboard.current.aKey.isPressed) movementDirection.x -= 1f;
-            if (Keyboard.current.dKey.isPressed) movementDirection.x += 1f;
-            
-            InputRequest.MovementDirection = movementDirection.normalized;
-            InputRequest.IsSprinting       = Keyboard.current.leftShiftKey.isPressed;
-            InputRequest.IsJumping         = Keyboard.current.spaceKey.isPressed;
+            InputRequest.IsSprinting       = input.Sprint;
+            InputRequest.IsJumping         = input.Jump;
         }
         
         public void OnDrawGizmosSelected()

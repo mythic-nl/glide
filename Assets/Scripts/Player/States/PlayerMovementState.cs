@@ -1,5 +1,6 @@
 ﻿using Player.States._Base;
 using UnityEngine;
+using Utils;
 
 namespace Player.States
 {
@@ -14,7 +15,7 @@ namespace Player.States
             velocity = Vector3.Lerp(
                 a: velocity,
                 b: targetVelocity,
-                t: Context.GetInterpolationTime(Context.walkAccelerationResponse, deltaTime)
+                t: Common.GetInterpolationTime(Context.walkAccelerationResponse, deltaTime)
             );
         }
         

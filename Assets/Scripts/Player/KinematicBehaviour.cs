@@ -19,17 +19,6 @@ namespace Player
         /// Set the inputs for the character controller.
         /// </summary>
         public abstract void OnUpdateUserInput();
-
-        /// <summary>
-        /// Get the interpolation time based on a response value and delta time.
-        /// </summary>
-        /// <param name="response"></param>
-        /// <param name="deltaTime"></param>
-        /// <returns></returns>
-        public float GetInterpolationTime(float response, float deltaTime)
-        {
-            return 1f - Mathf.Exp(-response * deltaTime);
-        }
         
         /// <summary>
         /// Get the direction vector tangent to a given surface normal. Allowing for better movement along slopes.
