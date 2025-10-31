@@ -103,25 +103,5 @@ namespace Player
             
             CharacterInfo = info;
         }
-
-        public void OnDrawGizmosSelected()
-        {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawLine(
-                character.transform.position, 
-                character.transform.position + CollisionInfo.Normal);
-            
-            Vector3 origin = transform.position;
-            float speed = velocity.magnitude;
-
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawRay(origin, velocity);
-            Gizmos.DrawSphere(origin + velocity, 0.05f);
-
-#if UNITY_EDITOR
-            UnityEditor.Handles.color = Color.white;
-            UnityEditor.Handles.Label(origin + velocity, $"Speed: {speed:F2}");
-#endif
-        }
     }
 }

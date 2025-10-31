@@ -45,5 +45,30 @@ namespace Player
             InputRequest.IsSprinting       = Keyboard.current.leftShiftKey.isPressed;
             InputRequest.IsJumping         = Keyboard.current.spaceKey.isPressed;
         }
+        
+        public void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawLine(
+                character.transform.position, 
+                character.transform.position + CollisionInfo.Normal);
+            
+            Vector3 origin = transform.position;
+
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawRay(origin, velocity);
+            Gizmos.DrawSphere(origin + velocity, 0.05f);
+
+            Vector3 force = Vector3.ProjectOnPlane(-CharacterInfo.Up, CollisionInfo.Normal) * downwardForce;
+            Gizmos.color = Color.red;
+            Gizmos.DrawRay(origin, force);
+            Gizmos.DrawSphere(origin + force, 0.05f);
+
+#if UNITY_EDITOR
+            UnityEditor.Handles.color = Color.white;
+            UnityEditor.Handles.Label(origin + velocity, $"Speed: {velocity.magnitude:F2}");
+            UnityEditor.Handles.Label(origin + force, $"Force: {force.magnitude:F2}");
+#endif
+        }
     }
 }

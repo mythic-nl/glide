@@ -19,6 +19,7 @@ namespace Player
             AddChildState<PlayerGroundedState, PlayerIdleState>();
             AddChildState<PlayerGroundedState, PlayerMovementState>();
             AddChildState<PlayerGroundedState, PlayerJumpState>();
+            AddChildState<PlayerGroundedState, PlayerSlideState>();
         }
         
         private void AirborneState()
@@ -30,7 +31,7 @@ namespace Player
 
         private void SlideState()
         {
-            AddRootState<PlayerSlideState>();
+            //AddRootState<PlayerSlideState>();
         }
     }
 }

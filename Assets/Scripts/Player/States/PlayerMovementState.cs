@@ -20,6 +20,7 @@ namespace Player.States
         
         protected override void SetTransitions()
         {
+            AddTransition<PlayerSlideState>(() => Context.CollisionInfo.Angle >= 45f);
             AddTransition<PlayerIdleState>(() => Context.InputRequest.MovementDirection.magnitude <= 0.1f);
             AddTransition<PlayerJumpState>(() => Context.InputRequest.IsJumping);
         }
