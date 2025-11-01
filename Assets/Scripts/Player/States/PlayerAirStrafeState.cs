@@ -26,6 +26,7 @@ namespace Player.States
         
         protected override void SetTransitions()
         {
+            AddTransition<PlayerJumpState>(() => Context.InputRequest.IsJumping && Context.coyoteTimeCounter <= Context.coyoteTimeDuration.Value);
         }
     }
 }

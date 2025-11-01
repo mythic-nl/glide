@@ -9,10 +9,14 @@ namespace Player.States
         protected override void OnEnter()
         {
             SetChild<PlayerAirStrafeState>();
+
+            Context.coyoteTimeCounter = 0f;
         }
         
         protected override void OnUpdateRotation(ref Quaternion rotation, float deltaTime)
         {
+            Context.coyoteTimeCounter += deltaTime;
+            
             if (Context.CharacterInfo.Velocity.magnitude >= 0.1f) {
                 Vector3 planarVelocity = Vector3.ProjectOnPlane(Context.CharacterInfo.Velocity, Context.CharacterInfo.Up);
 

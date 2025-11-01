@@ -15,6 +15,7 @@ namespace Player.States
         
         protected override void SetTransitions()
         {
+            AddTransition<PlayerAirStrafeState>(() => Context.CollisionInfo.Grounded == false);
         }
     }
 }

@@ -27,6 +27,7 @@ namespace Player
             AddRootState<PlayerAirborneState>();
             
             AddChildState<PlayerAirborneState, PlayerAirStrafeState>();
+            AddChildState<PlayerAirborneState, PlayerJumpState>();
         }
 
         private void SlideState()

@@ -2,6 +2,7 @@
 using ScriptableObjects;
 using Stateforge.Runtime.Interfaces;
 using UnityEngine;
+using UnityEngine.Serialization;
 using PlayerInput = Input.PlayerInput;
 
 namespace Player
@@ -37,8 +38,11 @@ namespace Player
         public FloatVariable upwardForce;
         public FloatVariable downwardForce;
 
-        [HideInInspector] 
-        public InputRequest InputRequest;
+        [Header("Timers")] 
+        public FloatVariable coyoteTimeDuration;
+
+        [HideInInspector] public InputRequest InputRequest;
+        [HideInInspector] public float coyoteTimeCounter;
 
         public override void OnUpdateUserInput()
         {
