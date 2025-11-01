@@ -25,7 +25,7 @@ namespace Player.States
                 rotation = Quaternion.RotateTowards(
                     from: rotation,
                     to: targetRotation,
-                    maxDegreesDelta: Context.rotationSpeed * deltaTime
+                    maxDegreesDelta: Context.rotationSpeed.Value * deltaTime
                 );
             }
         }
@@ -46,11 +46,11 @@ namespace Player.States
             float verticalSpeed = Vector3.Dot(velocity, Context.CharacterInfo.Up);
 
             if (Context.CollisionInfo.Grounded == false) {
-                float targetVerticalSpeed = -Context.gravity;
+                float targetVerticalSpeed = -Context.gravity.Value;
                 verticalSpeed = Mathf.Lerp(
                     a: verticalSpeed,
                     b: targetVerticalSpeed,
-                    t: Common.GetInterpolationTime(Context.gravityResponse, deltaTime)
+                    t: Common.GetInterpolationTime(Context.gravityResponse.Value, deltaTime)
                     );
             }
 

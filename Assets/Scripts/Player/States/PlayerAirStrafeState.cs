@@ -11,11 +11,11 @@ namespace Player.States
             Vector3 airborneMovement = planarDirection * Context.InputRequest.MovementDirection.magnitude;
                 
             Vector3 currentPlanarVelocity = Vector3.ProjectOnPlane(velocity, Context.CharacterInfo.Up);
-            Vector3 movementForce = airborneMovement * Context.airborneAcceleration * deltaTime;
+            Vector3 movementForce = airborneMovement * Context.airborneAcceleration.Value * deltaTime;
 
-            if (currentPlanarVelocity.magnitude < Context.airborneSpeed) {
+            if (currentPlanarVelocity.magnitude < Context.airborneSpeed.Value) {
                 Vector3 targetPlanarVelocity = currentPlanarVelocity + movementForce;
-                targetPlanarVelocity = Vector3.ClampMagnitude(targetPlanarVelocity, Context.airborneSpeed);
+                targetPlanarVelocity = Vector3.ClampMagnitude(targetPlanarVelocity, Context.airborneSpeed.Value);
                 movementForce = targetPlanarVelocity - currentPlanarVelocity;
             } else if (Vector3.Dot(currentPlanarVelocity, movementForce) > 0f) {
                 movementForce = Vector3.ProjectOnPlane(movementForce, currentPlanarVelocity.normalized);

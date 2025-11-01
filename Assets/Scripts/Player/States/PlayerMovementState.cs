@@ -11,11 +11,11 @@ namespace Player.States
             Vector3 planarVelocity = Context.GetDirectionTangentToSurface(Context.InputRequest.MovementDirection, Context.CollisionInfo.Normal);
             Vector3 groundedMovement = planarVelocity * Context.InputRequest.MovementDirection.magnitude;
 
-            Vector3 targetVelocity = groundedMovement * Context.walkSpeed;
+            Vector3 targetVelocity = groundedMovement * Context.walkSpeed.Value;
             velocity = Vector3.Lerp(
                 a: velocity,
                 b: targetVelocity,
-                t: Common.GetInterpolationTime(Context.walkAccelerationResponse, deltaTime)
+                t: Common.GetInterpolationTime(Context.walkAccelerationResponse.Value, deltaTime)
             );
         }
         

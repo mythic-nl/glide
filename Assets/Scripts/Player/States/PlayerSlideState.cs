@@ -14,9 +14,9 @@ namespace Player.States
         
         protected override void OnUpdateVelocity(ref Vector3 velocity, float deltaTime)
         {
-            velocity = Context.GetVelocityAfterFriction(velocity, Context.slideFriction, deltaTime);
+            velocity = Context.GetVelocityAfterFriction(velocity, Context.slideFriction.Value, deltaTime);
             
-            Vector3 force = Vector3.ProjectOnPlane(-Context.CharacterInfo.Up, Context.CollisionInfo.Normal) * Context.downwardForce;
+            Vector3 force = Vector3.ProjectOnPlane(-Context.CharacterInfo.Up, Context.CollisionInfo.Normal) * Context.downwardForce.Value;
             
             velocity += force * deltaTime;
         }
@@ -40,7 +40,7 @@ namespace Player.States
         {
             return Context.CollisionInfo.Grounded && 
                    Context.CollisionInfo.Angle < 45f && 
-                   Context.CharacterInfo.Velocity.magnitude < Context.slideEndSpeed &&
+                   Context.CharacterInfo.Velocity.magnitude < Context.slideEndSpeed.Value &&
                    Context.InputRequest.MovementDirection.magnitude <= 0.1f;
         }
     }

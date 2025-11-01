@@ -1,7 +1,7 @@
 ﻿using Player.Structs;
+using ScriptableObjects;
 using Stateforge.Runtime.Interfaces;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using PlayerInput = Input.PlayerInput;
 
 namespace Player
@@ -11,34 +11,33 @@ namespace Player
         [Header("References")] 
         [SerializeField] private PlayerInput input;
         [SerializeField] private Transform cameraTransform;
-        
-        [Header("Gravity")]
-        public float gravity = 45f;
-        public float gravityResponse = 6f;
+
+        [Header("Gravity")] 
+        public FloatVariable gravity;
+        public FloatVariable gravityResponse;
 
         [Header("Friction")] 
-        public float baseFriction = 3f;
-        public float slideFriction = 0.9f;
+        public FloatVariable baseFriction;
+        public FloatVariable slideFriction;
 
         [Header("Speed")] 
-        public float walkSpeed = 12f;
-        public float sprintSpeed = 16f;
-        public float airborneSpeed = 10f;
-        public float slideEndSpeed = 9f;
-        public float rotationSpeed = 50f;
+        public FloatVariable walkSpeed;
+        public FloatVariable sprintSpeed;
+        public FloatVariable airborneSpeed;
+        public FloatVariable slideEndSpeed;
+        public FloatVariable rotationSpeed;
 
         [Header("Acceleration")] 
-        public float walkAccelerationResponse = 10f;
-        public float sprintAccelerationResponse = 13f;
-        public float airborneAcceleration = 30f;
+        public FloatVariable walkAccelerationResponse;
+        public FloatVariable sprintAccelerationResponse;
+        public FloatVariable airborneAcceleration;
 
         [Header("Forces")] 
-        public float upwardForce = 40f;
-        public float downwardForce = 60f;
+        public FloatVariable upwardForce;
+        public FloatVariable downwardForce;
 
         [HideInInspector] 
         public InputRequest InputRequest;
-        public Transform CameraTransform => cameraTransform;
 
         public override void OnUpdateUserInput()
         {
@@ -61,17 +60,17 @@ namespace Player
             Vector3 origin = transform.position;
 
             Gizmos.color = Color.cyan;
-            Gizmos.DrawRay(origin, velocity);
-            Gizmos.DrawSphere(origin + velocity, 0.05f);
+            Gizmos.DrawRay(origin, velocity.Value);
+            Gizmos.DrawSphere(origin + velocity.Value, 0.05f);
 
-            Vector3 force = Vector3.ProjectOnPlane(-CharacterInfo.Up, CollisionInfo.Normal) * downwardForce;
+            Vector3 force = Vector3.ProjectOnPlane(-CharacterInfo.Up, CollisionInfo.Normal) * downwardForce.Value;
             Gizmos.color = Color.red;
             Gizmos.DrawRay(origin, force);
             Gizmos.DrawSphere(origin + force, 0.05f);
 
 #if UNITY_EDITOR
             UnityEditor.Handles.color = Color.white;
-            UnityEditor.Handles.Label(origin + velocity, $"Speed: {velocity.magnitude:F2}");
+            UnityEditor.Handles.Label(origin + velocity.Value, $"Speed: {velocity.Value.magnitude:F2}");
             UnityEditor.Handles.Label(origin + force, $"Force: {force.magnitude:F2}");
 #endif
         }

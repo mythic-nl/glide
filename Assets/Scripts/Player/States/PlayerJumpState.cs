@@ -8,7 +8,7 @@ namespace Player.States
         protected override void OnEnterVelocity(ref Vector3 velocity, float deltaTime)
         {
             float currentVerticalSpeed = Vector3.Dot(velocity, Context.CharacterInfo.Up);
-            float targetVerticalSpeed = Mathf.Max(currentVerticalSpeed, Context.upwardForce);
+            float targetVerticalSpeed = Mathf.Max(currentVerticalSpeed, Context.upwardForce.Value);
                 
             velocity += Context.CharacterInfo.Up * (targetVerticalSpeed - currentVerticalSpeed);
         }

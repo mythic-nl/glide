@@ -55,9 +55,12 @@ namespace Player.States._Base
             
             if (Context is PlayerContext context) {
                 float deltaTime = Time.deltaTime;
+                Vector3 velocity = context.velocity.Value;
                 
                 OnEnterRotation(ref context.rotation, deltaTime);
-                OnEnterVelocity(ref context.velocity, deltaTime);
+                OnEnterVelocity(ref velocity, deltaTime);
+                
+                context.velocity.Value = velocity;
             }
         }
 
@@ -81,7 +84,8 @@ namespace Player.States._Base
 
             if (Context is PlayerContext context) {
                 float deltaTime = Time.deltaTime;
-
+                Vector3 velocity = context.velocity.Value;
+                
                 if (IsRootState) {
                     context.HandleUpdateTransform();
                     context.HandleUpdateCharacterInfo();
@@ -90,10 +94,12 @@ namespace Player.States._Base
                 
                 context.OnUpdateUserInput();
                 OnUpdateRotation(ref context.rotation, deltaTime);
-                OnUpdateVelocity(ref context.velocity, deltaTime);
+                OnUpdateVelocity(ref velocity, deltaTime);
+                
+                context.velocity.Value = velocity;
                 
                 if (IsRootState) {
-                    context.character.Move(context.velocity * deltaTime);
+                    context.character.Move(context.velocity.Value * deltaTime);
                 }
             }
         }

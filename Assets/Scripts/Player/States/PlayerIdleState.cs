@@ -7,7 +7,7 @@ namespace Player.States
     {
         protected override void OnUpdateVelocity(ref Vector3 velocity, float deltaTime)
         {
-            velocity = Context.GetVelocityAfterFriction(velocity, Context.baseFriction, deltaTime);
+            velocity = Context.GetVelocityAfterFriction(velocity, Context.baseFriction.Value, deltaTime);
         }
         
         protected override void SetTransitions()

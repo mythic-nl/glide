@@ -1,4 +1,5 @@
 ﻿using System;
+using ScriptableObjects;
 using UnityEngine;
 using CharacterInfo = Player.Structs.CharacterInfo;
 using CollisionInfo = Player.Structs.CollisionInfo;
@@ -10,7 +11,7 @@ namespace Player
         public CollisionInfo CollisionInfo { get; private set; } = new();
         public CharacterInfo CharacterInfo { get; private set;  } = new();
 
-        /*[HideInInspector]*/ public Vector3 velocity;
+        public Vector3Variable velocity;
         [HideInInspector] public Quaternion rotation;
 
         public CharacterController character;
@@ -88,7 +89,7 @@ namespace Player
             CharacterInfo info = CharacterInfo;
             
             info.Rotation = rotation;
-            info.Velocity = velocity;
+            info.Velocity = velocity.Value;
             
             CharacterInfo = info;
         }
