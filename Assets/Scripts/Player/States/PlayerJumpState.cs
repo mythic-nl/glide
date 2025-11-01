@@ -15,6 +15,7 @@ namespace Player.States
         
         protected override void SetTransitions()
         {
+            // TODO fix, because now this will go to the airstrafe state while being in the grounded parent state..
             AddTransition<PlayerAirStrafeState>(() => Context.CollisionInfo.Grounded == false);
         }
     }
