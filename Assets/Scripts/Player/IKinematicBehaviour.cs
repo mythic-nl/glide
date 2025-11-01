@@ -21,6 +21,11 @@ namespace Player
         /// Lifecycle method called to update user input.
         /// </summary>
         public void OnUpdateUserInput();
+        
+        /// <summary>
+        /// Handle the transform update for the character controller.
+        /// </summary>
+        public void OnUpdateTransform();
 
         /// <summary>
         /// Get the direction vector tangent to a given surface normal. Allowing for better movement along slopes.
@@ -34,11 +39,6 @@ namespace Player
         /// Handle physics update for the character controller.
         /// </summary>
         public void HandleUpdatePhysics();
-
-        /// <summary>
-        /// Handle the transform update for the character controller.
-        /// </summary>
-        public void HandleUpdateTransform();
 
         /// <summary>
         /// Handle updating the character info.

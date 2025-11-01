@@ -22,6 +22,11 @@ namespace Player
         public abstract void OnUpdateUserInput();
         
         /// <summary>
+        /// Handle the transform update for the character controller.
+        /// </summary>
+        public abstract void OnUpdateTransform();
+        
+        /// <summary>
         /// Get the direction vector tangent to a given surface normal. Allowing for better movement along slopes.
         /// </summary>
         /// <param name="direction"></param>
@@ -71,14 +76,6 @@ namespace Player
             info.Angle    = Vector3.Angle(hitInfo.normal, CharacterInfo.Up);
             
             CollisionInfo = info;
-        }
-        
-        /// <summary>
-        /// Handle the transform update for the character controller.
-        /// </summary>
-        public void HandleUpdateTransform()
-        {
-            character.transform.rotation = rotation;
         }
 
         /// <summary>

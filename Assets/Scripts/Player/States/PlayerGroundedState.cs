@@ -21,7 +21,10 @@ namespace Player.States
                     return;
                 }
                 
-                Quaternion targetRotation = Quaternion.LookRotation(planarVelocity, Context.CharacterInfo.Up);
+                Quaternion turnRotation = Quaternion.LookRotation(planarVelocity, Context.CharacterInfo.Up);
+
+                float forwardRotation = Mathf.Clamp(planarVelocity.z, -13f, 13f);
+                Quaternion targetRotation = Quaternion.Euler(forwardRotation, turnRotation.eulerAngles.y, turnRotation.z);
                 rotation = Quaternion.RotateTowards(
                     from: rotation,
                     to: targetRotation,

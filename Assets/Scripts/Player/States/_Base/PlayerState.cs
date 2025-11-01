@@ -87,7 +87,7 @@ namespace Player.States._Base
                 Vector3 velocity = context.velocity.Value;
                 
                 if (IsRootState) {
-                    context.HandleUpdateTransform();
+                    context.OnUpdateTransform();
                     context.HandleUpdateCharacterInfo();
                     context.HandleUpdatePhysics();
                 }

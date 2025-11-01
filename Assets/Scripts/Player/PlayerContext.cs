@@ -11,6 +11,7 @@ namespace Player
         [Header("References")] 
         [SerializeField] private PlayerInput input;
         [SerializeField] private Transform cameraTransform;
+        [SerializeField] private Transform root;
 
         [Header("Gravity")] 
         public FloatVariable gravity;
@@ -49,7 +50,12 @@ namespace Player
             InputRequest.IsSprinting       = input.Sprint;
             InputRequest.IsJumping         = input.Jump;
         }
-        
+
+        public override void OnUpdateTransform()
+        {
+            root.transform.rotation = rotation;
+        }
+
         public void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.yellow;
