@@ -2,7 +2,6 @@
 using ScriptableObjects;
 using Stateforge.Runtime.Interfaces;
 using UnityEngine;
-using UnityEngine.Serialization;
 using PlayerInput = Input.PlayerInput;
 
 namespace Player

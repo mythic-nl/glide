@@ -1,6 +1,7 @@
 ﻿using System;
 using Input;
 using Player.Structs;
+using ScriptableObjects;
 using UnityEngine;
 using Utils;
 
@@ -10,15 +11,15 @@ namespace Player.Camera
     {
         [Header("References")]
         [SerializeField] private PlayerInput input;
+        [SerializeField] private Transform target;
         
         [Header("Settings")]
-        [SerializeField] private Transform target;
-        [SerializeField] private float distance = 3f;
-        [SerializeField] private float sensitivity = 1.0f;
-        [SerializeField] private float minPitch = -30.0f;
-        [SerializeField] private float maxPitch = 60.0f;
-        [SerializeField] private float followPlanarResponse = 16f;
-        [SerializeField] private float followVerticalResponse = 8f;
+        [SerializeField] private FloatVariable distance;
+        [SerializeField] private FloatVariable sensitivity;
+        [SerializeField] private FloatVariable minPitch;
+        [SerializeField] private FloatVariable maxPitch;
+        [SerializeField] private FloatVariable followPlanarResponse;
+        [SerializeField] private FloatVariable followVerticalResponse;
 
         private InputRequest _inputRequest;
 
@@ -31,7 +32,7 @@ namespace Player.Camera
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
             
-            transform.position = target.position - transform.forward * distance;
+            transform.position = target.position - transform.forward * distance.Value;
         }
         
         private void Update()
@@ -39,10 +40,10 @@ namespace Player.Camera
             float deltaTime = Time.deltaTime;
             
             _inputRequest.LookDirection = input.Look;
-            _yaw   += _inputRequest.LookDirection.x * sensitivity * deltaTime;
-            _pitch -= _inputRequest.LookDirection.y * sensitivity * deltaTime;
+            _yaw   += _inputRequest.LookDirection.x * sensitivity.Value * deltaTime;
+            _pitch -= _inputRequest.LookDirection.y * sensitivity.Value * deltaTime;
             
-            _pitch = Mathf.Clamp(_pitch, minPitch, maxPitch);
+            _pitch = Mathf.Clamp(_pitch, minPitch.Value, maxPitch.Value);
         }
         
         private void LateUpdate()
@@ -53,31 +54,45 @@ namespace Player.Camera
             }
 
             float deltaTime = Time.deltaTime;
-            
-            Vector3 desiredPosition = target.position - transform.forward * distance;
+
+            Quaternion desiredRotation = Quaternion.Euler(_pitch, _yaw, 0f);
+            Vector3 desiredPosition = target.position - (desiredRotation * Vector3.forward) * distance.Value;
+
+            float planarSmoothTime = Common.GetInterpolationTime(followPlanarResponse.Value, deltaTime);
+            float verticalSmoothTime = Common.GetInterpolationTime(followVerticalResponse.Value, deltaTime);
+
+            Vector3 planarDesiredTarget = new Vector3(desiredPosition.x, transform.position.y, desiredPosition.z);
             Vector3 planarPosition = Vector3.Lerp(
                 a: transform.position,
-                b: desiredPosition,
-                t: Common.GetInterpolationTime(followPlanarResponse, deltaTime)
-            );
+                b: planarDesiredTarget,
+                t: planarSmoothTime
+            );            
+            
             float verticalPosition = Mathf.Lerp(
                 a: transform.position.y,
                 b: desiredPosition.y,
-                t: Common.GetInterpolationTime(followVerticalResponse, deltaTime)
+                t: verticalSmoothTime
             );
-
-            transform.eulerAngles = new Vector3(_pitch, _yaw);
+            
+            transform.rotation = desiredRotation;
             transform.position = new Vector3(planarPosition.x, verticalPosition, planarPosition.z);
         }
 
         private void OnDrawGizmosSelected()
         {
             if (target == false) return;
-            
-            transform.position = target.position - transform.forward * distance;
-            Gizmos.color = Color.green;
-            Gizmos.DrawLine(target.position, transform.position);
-            Gizmos.DrawSphere(transform.position, 0.1f);
+
+#if UNITY_EDITOR
+            if (Application.isPlaying == false) {
+                // Do not modify transform here. Compute a preview position and draw gizmos from it.
+                Quaternion previewRotation = Quaternion.Euler(_pitch, _yaw, 0f);
+                Vector3 previewPos = target.position - (previewRotation * Vector3.forward) * distance.Value;
+
+                Gizmos.color = Color.green;
+                Gizmos.DrawLine(target.position, previewPos);
+                Gizmos.DrawSphere(previewPos, 0.1f);
+            }
+#endif
         }
     }
 }

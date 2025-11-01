@@ -70,11 +70,12 @@ namespace Player
 
             CollisionInfo info = CollisionInfo;
             
+            
             info.Grounded = collided;
             info.Point    = hitInfo.point;
             info.Normal   = hitInfo.normal;
             info.Angle    = Vector3.Angle(hitInfo.normal, CharacterInfo.Up);
-            info.IsStable = (info.Grounded && info.Angle < 45f);
+            info.IsStable = (collided && info.Angle < 45f);
             
             CollisionInfo = info;
         }

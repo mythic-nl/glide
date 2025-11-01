@@ -95,7 +95,7 @@ namespace Player.States._Base
                 context.OnUpdateUserInput();
                 OnUpdateRotation(ref context.rotation, deltaTime);
                 OnUpdateVelocity(ref velocity, deltaTime);
-                
+
                 context.velocity.Value = velocity;
                 
                 if (IsRootState) {
