@@ -8,5 +8,6 @@ namespace Player.Structs
         public Vector2 LookDirection;
         public bool IsJumping;
         public bool IsSprinting;
+        public bool IsCrouching;
     }
 }

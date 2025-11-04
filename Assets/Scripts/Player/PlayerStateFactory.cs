@@ -20,6 +20,7 @@ namespace Player
             AddChildState<PlayerGroundedState, PlayerMovementState>();
             AddChildState<PlayerGroundedState, PlayerJumpState>();
             AddChildState<PlayerGroundedState, PlayerSlideState>();
+            AddChildState<PlayerGroundedState, PlayerCrouchSlideState>();
         }
         
         private void AirborneState()

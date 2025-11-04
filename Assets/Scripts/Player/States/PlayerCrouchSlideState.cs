@@ -1,15 +1,17 @@
-﻿using System.Net.Mime;
-using Player.States._Base;
+﻿using Player.States._Base;
 using UnityEngine;
 
 namespace Player.States
 {
-    public class PlayerSlideState : PlayerState<PlayerContext>
+    public class PlayerCrouchSlideState : PlayerState<PlayerContext>
     {
         protected override void OnEnterVelocity(ref Vector3 velocity, float deltaTime)
         {
-            Vector3 planarVelocity = Context.GetDirectionTangentToSurface(velocity, Context.CollisionInfo.Normal);
-            velocity = planarVelocity;
+            var slideSpeed = Mathf.Max(Context.slideStartSpeed.Value, velocity.magnitude);
+            velocity = Context.GetDirectionTangentToSurface(
+                velocity,
+                Context.CollisionInfo.Normal
+            ) * slideSpeed;   
         }
         
         protected override void OnUpdateVelocity(ref Vector3 velocity, float deltaTime)
@@ -22,28 +24,37 @@ namespace Player.States
             
             velocity += groundedMovement + force * deltaTime;
         }
-        
+
         protected override void SetTransitions()
         {
             AddTransition<PlayerIdleState>(ToIdleCondition);
             AddTransition<PlayerMovementState>(ToMovementCondition);
+            AddTransition<PlayerSlideState>(ToSlideCondition);
             AddTransition<PlayerJumpState>(() => Context.InputRequest.IsJumping);
             AddTransition<PlayerAirborneState>(() => Context.CollisionInfo.Grounded == false);
         }
-
+        
         private bool ToMovementCondition()
         {
             return Context.CollisionInfo.Grounded && 
                    Context.CollisionInfo.Angle < 45f && 
-                   Context.InputRequest.MovementDirection.magnitude > 0.1f;
+                   Context.InputRequest.MovementDirection.magnitude > 0.1f &&
+                   Context.CharacterInfo.Velocity.magnitude <= 0.1f;
         }
         
         private bool ToIdleCondition()
         {
+            return Context.CollisionInfo.Grounded &&
+                   Context.CollisionInfo.Angle < 45f &&
+                   Context.InputRequest.MovementDirection.magnitude <= 0.1f &&
+                   Context.CharacterInfo.Velocity.magnitude < Context.slideEndSpeed.Value;
+        }
+        
+        private bool ToSlideCondition()
+        {
             return Context.CollisionInfo.Grounded && 
-                   Context.CollisionInfo.Angle < 45f && 
-                   Context.CharacterInfo.Velocity.magnitude < Context.slideEndSpeed.Value &&
-                   Context.InputRequest.MovementDirection.magnitude <= 0.1f;
+                   Context.CollisionInfo.Angle >= 45f &&
+                   Context.CharacterInfo.Velocity.magnitude >= Context.slideEndSpeed.Value;
         }
     }
 }

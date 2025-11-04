@@ -25,6 +25,7 @@ namespace Player
         public FloatVariable walkSpeed;
         public FloatVariable sprintSpeed;
         public FloatVariable airborneSpeed;
+        public FloatVariable slideStartSpeed;
         public FloatVariable slideEndSpeed;
         public FloatVariable rotationSpeed;
 
@@ -48,10 +49,11 @@ namespace Player
             Vector3 forward = Vector3.ProjectOnPlane(cameraTransform.forward, CharacterInfo.Up).normalized;
             Vector3 right   = Vector3.ProjectOnPlane(cameraTransform.right, CharacterInfo.Up).normalized;
             Vector3 movementDirection = (forward * input.Move.y) + (right * input.Move.x);
-            InputRequest.MovementDirection = Vector3.ClampMagnitude(movementDirection, 1f);;
+            InputRequest.MovementDirection = Vector3.ClampMagnitude(movementDirection, 1f);
             
             InputRequest.IsSprinting       = input.Sprint;
             InputRequest.IsJumping         = input.Jump;
+            InputRequest.IsCrouching       = input.Crouch;
         }
 
         public override void OnUpdateTransform()
@@ -64,7 +66,8 @@ namespace Player
             Gizmos.color = Color.yellow;
             Gizmos.DrawLine(
                 character.transform.position, 
-                character.transform.position + CollisionInfo.Normal);
+                character.transform.position + CollisionInfo.Normal
+            );
             
             Vector3 origin = transform.position;
 
