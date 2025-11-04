@@ -1,4 +1,5 @@
-﻿using Player.States._Base;
+﻿using System;
+using Player.States._Base;
 using Player.Structs;
 using UnityEngine;
 using Utils;
@@ -23,13 +24,22 @@ namespace Player.States
                 
                 Quaternion turnRotation = Quaternion.LookRotation(planarVelocity, Context.CharacterInfo.Up);
 
-                float forwardRotation = Mathf.Clamp(planarVelocity.z, -13f, 13f);
-                Quaternion targetRotation = Quaternion.Euler(forwardRotation, turnRotation.eulerAngles.y, turnRotation.z);
+                // NOTE: Applying pitch/roll to the root transform will tilt the collider (CharacterController/Capsule),
+                // which breaks collisions. Only apply yaw (rotation around the up axis) to the root. If you want a
+                // visual forward lean based on velocity, apply it to a visual child (mesh/graphics) instead.
+
+                // Only use the yaw from the computed turnRotation for the root/collider.
+                Quaternion targetRotation = Quaternion.Euler(0f, turnRotation.eulerAngles.y, 0f);
+
                 rotation = Quaternion.RotateTowards(
                     from: rotation,
                     to: targetRotation,
                     maxDegreesDelta: Context.rotationSpeed.Value * deltaTime
                 );
+
+                // If you still want to visually tilt the model forward based on velocity (without affecting the collider),
+                // consider applying a pitch to a visual child transform, e.g.:
+                // visualModel.localRotation = Quaternion.Euler(visualPitch, 0f, 0f);
             }
         }
 

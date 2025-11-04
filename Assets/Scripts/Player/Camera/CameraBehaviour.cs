@@ -27,12 +27,24 @@ namespace Player.Camera
         private float _pitch;
         private float _distance;
 
+        // Track last known target Y to detect vertical movement of the target itself
+        private float _lastTargetY;
+
         private void Start()
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
-            
+
+            if (target == null) {
+                Debug.LogError("CameraBehaviour: No target assigned for the camera.");
+                return;
+            }
+
+            // Position camera at the desired distance along current forward
             transform.position = target.position - transform.forward * distance.Value;
+
+            // Initialize last target Y for vertical movement detection
+            _lastTargetY = target.position.y;
         }
         
         private void Update()
@@ -57,34 +69,27 @@ namespace Player.Camera
 
             Quaternion desiredRotation = Quaternion.Euler(_pitch, _yaw, 0f);
             Vector3 desiredPosition = target.position - (desiredRotation * Vector3.forward) * distance.Value;
-
-            float planarSmoothTime = Common.GetInterpolationTime(followPlanarResponse.Value, deltaTime);
-            float verticalSmoothTime = Common.GetInterpolationTime(followVerticalResponse.Value, deltaTime);
-
-            Vector3 planarDesiredTarget = new Vector3(desiredPosition.x, transform.position.y, desiredPosition.z);
-            Vector3 planarPosition = Vector3.Lerp(
-                a: transform.position,
-                b: planarDesiredTarget,
-                t: planarSmoothTime
-            );            
             
-            float verticalPosition = Mathf.Lerp(
+            float verticalSmoothing = Mathf.Lerp(
                 a: transform.position.y,
                 b: desiredPosition.y,
-                t: verticalSmoothTime
+                t: Common.GetInterpolationTime(followVerticalResponse.Value, deltaTime)
             );
             
             transform.rotation = desiredRotation;
-            transform.position = new Vector3(planarPosition.x, verticalPosition, planarPosition.z);
+            transform.position = new Vector3(desiredPosition.x, verticalSmoothing, desiredPosition.z);
         }
 
-        private void OnDrawGizmosSelected()
+        private void OnDrawGizmos()
         {
-            if (target == false) return;
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(target.position, distance.Value);
 
-#if UNITY_EDITOR
+            if (target == false) {
+                return;
+            }
+            
             if (Application.isPlaying == false) {
-                // Do not modify transform here. Compute a preview position and draw gizmos from it.
                 Quaternion previewRotation = Quaternion.Euler(_pitch, _yaw, 0f);
                 Vector3 previewPos = target.position - (previewRotation * Vector3.forward) * distance.Value;
 
@@ -92,7 +97,6 @@ namespace Player.Camera
                 Gizmos.DrawLine(target.position, previewPos);
                 Gizmos.DrawSphere(previewPos, 0.1f);
             }
-#endif
         }
     }
 }

@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76c07cd640824d73907877c5c5b6e7cc, type: 3}
   m_Name: MaxPitch
   m_EditorClassIdentifier: Assembly-CSharp::ScriptableObjects.FloatVariable
-  value: 60
+  value: 77.6
